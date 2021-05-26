@@ -1,49 +1,48 @@
-import styled from 'styled-components';
-import { auth, provider } from '../Firebase';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useEffect } from "react";
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { auth, provider } from "../firebase";
 import {
   selectUserName,
   selectUserPhoto,
-  selectUserEmail,
   setUserLoginDetails,
   setSignOutState,
-} from '../features/user/userSlice';
-import { useEffect } from 'react';
+} from "../features/user/userSlice";
 
 const Header = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const username = useSelector(selectUserName);
+  const userName = useSelector(selectUserName);
   const userPhoto = useSelector(selectUserPhoto);
 
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         setUser(user);
-        history.push('/home');
+        history.push("/home");
       }
     });
-  }, [username]);
+  }, [userName]);
 
   const handleAuth = () => {
-    if (!username) {
+    if (!userName) {
       auth
         .signInWithPopup(provider)
         .then((result) => {
           setUser(result.user);
-          console.log(result);
         })
         .catch((error) => {
           alert(error.message);
         });
-    } else if (username) {
-      auth.signOut().then(() => {
-        dispatch(setSignOutState());
-        history.push('/');
-      }).catch((error) => {
-        alert(error.message);
-      });
+    } else if (userName) {
+      auth
+        .signOut()
+        .then(() => {
+          dispatch(setSignOutState());
+          history.push("/");
+        })
+        .catch((err) => alert(err.message));
     }
   };
 
@@ -60,60 +59,50 @@ const Header = (props) => {
   return (
     <Nav>
       <Logo>
-        <img src='/images/logo.svg' alt='' />
+        <img src="/images/logo.svg" alt="Disney+" />
       </Logo>
 
-      {!username ? (
+      {!userName ? (
         <Login onClick={handleAuth}>Login</Login>
       ) : (
         <>
           <NavMenu>
-            <a href='/home'>
-              <img src='/images/home-icon.svg' alt='HOME' />
+            <a href="/home">
+              <img src="/images/home-icon.svg" alt="HOME" />
               <span>HOME</span>
             </a>
-            <a href='/search'>
-              <img src='/images/search-icon.svg' alt='SEARCH' />
+            <a>
+              <img src="/images/search-icon.svg" alt="SEARCH" />
               <span>SEARCH</span>
             </a>
-            <a href='/watchlist'>
-              <img src='/images/watchlist-icon.svg' alt='WATCHLIST' />
+            <a>
+              <img src="/images/watchlist-icon.svg" alt="WATCHLIST" />
               <span>WATCHLIST</span>
             </a>
-            <a href='/original'>
-              <img src='/images/original-icon.svg' alt='ORIGINAL' />
-              <span>ORIGINAL</span>
+            <a>
+              <img src="/images/original-icon.svg" alt="ORIGINALS" />
+              <span>ORIGINALS</span>
             </a>
-            <a href='/series'>
-              <img src='/images/series-icon.svg' alt='SERIES' />
+            <a>
+              <img src="/images/movie-icon.svg" alt="MOVIES" />
+              <span>MOVIES</span>
+            </a>
+            <a>
+              <img src="/images/series-icon.svg" alt="SERIES" />
               <span>SERIES</span>
             </a>
           </NavMenu>
           <SignOut>
-            <UserImg src={userPhoto} alt={username} />
+            <UserImg src={userPhoto} alt={userName} />
             <DropDown>
               <span onClick={handleAuth}>Sign out</span>
             </DropDown>
           </SignOut>
         </>
       )}
-      {/* <Login onClick={handleAuth}>Login</Login> */}
     </Nav>
   );
 };
-
-const Logo = styled.a`
-  padding: 0;
-  width: 80px;
-  margin-top: 4px;
-  max-height: 70px;
-  font-size: 0;
-  display: inline-block;
-  img {
-    display: block;
-    width: 100%;
-  }
-`;
 
 const Nav = styled.nav`
   position: fixed;
@@ -130,12 +119,28 @@ const Nav = styled.nav`
   z-index: 3;
 `;
 
+const Logo = styled.a`
+  padding: 0;
+  width: 80px;
+  margin-top: 4px;
+  max-height: 70px;
+  font-size: 0;
+  display: inline-block;
+
+  img {
+    display: block;
+    width: 100%;
+  }
+`;
+
 const NavMenu = styled.div`
   align-items: center;
   display: flex;
   flex-flow: row nowrap;
   height: 100%;
   justify-content: flex-end;
+  margin: 0px;
+  padding: 0px;
   position: relative;
   margin-right: auto;
   margin-left: 25px;
@@ -160,15 +165,14 @@ const NavMenu = styled.div`
       padding: 2px 0px;
       white-space: nowrap;
       position: relative;
-      margin-left: 10px;
 
       &:before {
         background-color: rgb(249, 249, 249);
         border-radius: 0px 0px 4px 4px;
         bottom: -6px;
-        content: '';
-        left: 0px;
+        content: "";
         height: 2px;
+        left: 0px;
         opacity: 0;
         position: absolute;
         right: 0px;
@@ -181,16 +185,17 @@ const NavMenu = styled.div`
     }
 
     &:hover {
-      span: before {
+      span:before {
         transform: scaleX(1);
         visibility: visible;
         opacity: 1 !important;
       }
     }
   }
-  @media (max-width: 768px) {
+
+  /* @media (max-width: 768px) {
     display: none;
-  }
+  } */
 `;
 
 const Login = styled.a`
@@ -200,7 +205,7 @@ const Login = styled.a`
   letter-spacing: 1.5px;
   border: 1px solid #f9f9f9;
   border-radius: 4px;
-  transition: 200ms ease-out;
+  transition: all 0.2s ease 0s;
 
   &:hover {
     background-color: #f9f9f9;
@@ -230,7 +235,7 @@ const DropDown = styled.div`
 
 const SignOut = styled.div`
   position: relative;
-  height: 40px;
+  height: 48px;
   width: 48px;
   display: flex;
   cursor: pointer;
@@ -239,7 +244,7 @@ const SignOut = styled.div`
 
   ${UserImg} {
     border-radius: 50%;
-    /* width: 100%; */
+    width: 100%;
     height: 100%;
   }
 

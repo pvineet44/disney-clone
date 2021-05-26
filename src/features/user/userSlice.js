@@ -1,13 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  name: '',
-  email: '',
-  photo: '',
+  name: "",
+  email: "",
+  photo: "",
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setUserLoginDetails: (state, action) => {
@@ -24,10 +24,10 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUserLoginDetails, setSignOutState} = userSlice.actions;
+export const { setUserLoginDetails, setSignOutState } = userSlice.actions;
 
-export const selectUserName = state => state.user.name;
-export const selectUserEmail = state => state.user.email;
-export const selectUserPhoto = state => state.user.photo;
+export const selectUserName = (state) => state.user.name;
+export const selectUserEmail = (state) => state.user.email;
+export const selectUserPhoto = (state) => state.user.photo;
 
 export default userSlice.reducer;
